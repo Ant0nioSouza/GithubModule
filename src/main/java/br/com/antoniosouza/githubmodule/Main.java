@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
@@ -41,6 +43,20 @@ public class Main {
             System.out.println(repositories[0].name); // print the recent update
 
 
+            // Extrai o dia da data atual
+            LocalDate dataAtual = LocalDate.now();
+            int diaAtual = dataAtual.getDayOfMonth();
+
+            // Extrai o dia do update mais recente do repositório
+            LocalDate dataUpdate = repositories[0].updated_at.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            int diaUpdate = dataUpdate.getDayOfMonth();
+
+            // Verifica se o dia atual é igual ao dia do update mais recente do repositório
+            if(diaAtual == diaUpdate) {
+                System.out.println("Hoje é o dia do último update do repositório " + repositories[0].name);
+            } else {
+                System.out.println("Hoje não é o dia do último update do repositório " + repositories[0].name);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
