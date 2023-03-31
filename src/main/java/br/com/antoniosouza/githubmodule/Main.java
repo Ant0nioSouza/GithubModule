@@ -1,8 +1,10 @@
 package br.com.antoniosouza.githubmodule;
 
+import br.com.antoniosouza.githubmodule.utils.GitUtils;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -12,12 +14,16 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Random;
 
 public class Main {
     private static URL url;
 
+    private static String path;
+
     public static void initModule(String author, String repoPath) throws MalformedURLException, MalformedURLException {
         url = new URL("https://api.github.com/users/" + author + "/repos");
+        path = repoPath;
     }
 
     public static void loopModule() {
@@ -56,16 +62,40 @@ public class Main {
                 System.out.println("Hoje é o dia do último update do repositório " + repositories[0].name);
             } else {
                 System.out.println("Hoje não é o dia do último update do repositório " + repositories[0].name);
+                String filename = ""; // variable to store the filename
+                File file;
+
+                // create a new Random object to generate random numbers
+                Random rand = new Random();
+
+                do {
+                    // generate a random integer between 1 and 1000
+                    int randInt = rand.nextInt(1000) + 1;
+                    // set the filename to the random integer with a .txt extension
+                    filename = Integer.toString(randInt) + ".txt";
+                    // create a new File object with the path and filename
+                    file = new File(path + filename);
+                } while (file.exists()); // keep looping until a unique filename is found
+
+                try {
+                    // create the file
+                    boolean created = file.createNewFile();
+                    if (created) {
+                        System.out.println("File created successfully: " + filename);
+                    } else {
+                        System.out.println("File already exists: " + filename);
+                    }
+                } catch (Exception e) {
+                    System.out.println("An error occurred while creating the file.");
+                    e.printStackTrace();
+
+                }
+                GitUtils.gitAddCommitPush(path, "From GithubModule...");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) throws MalformedURLException {
-        initModule("ant0niosouza", "s");
-        loopModule();
     }
 
     private static class Repository {
